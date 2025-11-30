@@ -33,6 +33,7 @@ tasks {
         gwtVersion = "2.12.2"
         sourceLevel = "auto"
         modules = listOf("dev.sayaya.Todo")
+        war = file("src/main/webapp")
         devMode {
             modules = listOf(
                 "dev.sayaya.Todo",
