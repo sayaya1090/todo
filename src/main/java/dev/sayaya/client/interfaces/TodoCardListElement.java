@@ -19,11 +19,7 @@ import static org.jboss.elemento.Elements.ul;
 
 @Singleton
 public class TodoCardListElement implements IsElement<HTMLUListElement> {
-    @Delegate private final HTMLContainerBuilder<HTMLUListElement> ul = ul().style("""
-           list-style: none;
-           margin: 0;
-           padding: 0;
-         """);
+    @Delegate private final HTMLContainerBuilder<HTMLUListElement> ul = ul();
     private final Map<TodoStore, TodoCardElement> cards = new HashMap<>();
     private final TodoCardElement.TodoCardElementFactory factory;
     @Inject TodoCardListElement(TodoFiltered todos, TodoCardElement.TodoCardElementFactory factory) {
