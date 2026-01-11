@@ -19,7 +19,6 @@ dependencies {
     implementation("dev.sayaya:ui:2.4.1.1")
     implementation("dev.sayaya:rx:2.2.1")
     implementation("com.google.dagger:dagger-gwt:2.57.2")
-    implementation("com.google.dagger:dagger-compiler:2.57.2")
     annotationProcessor("com.google.dagger:dagger-compiler:2.57.2")
     implementation("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
