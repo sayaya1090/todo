@@ -3,7 +3,6 @@ package dev.sayaya.client.interfaces;
 import com.google.gwt.core.client.EntryPoint;
 import dev.sayaya.client.domain.State;
 import dev.sayaya.client.usecase.TodoFactory;
-import dev.sayaya.client.usecase.TodoFiltered;
 
 import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.body;

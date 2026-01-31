@@ -7,17 +7,13 @@ import dev.sayaya.client.usecase.TodoListStore;
 import dev.sayaya.ui.dom.MdIconButtonElement;
 import dev.sayaya.ui.elements.IconButtonElementBuilder;
 import dev.sayaya.ui.elements.IconElementBuilder;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.MouseEvent;
 import lombok.experimental.Delegate;
-import org.jboss.elemento.EventCallbackFn;
 import org.jboss.elemento.IsElement;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static dev.sayaya.ui.elements.ButtonElementBuilder.button;
 

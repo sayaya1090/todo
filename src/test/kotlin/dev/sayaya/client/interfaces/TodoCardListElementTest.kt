@@ -10,7 +10,7 @@ import io.kotest.matchers.collections.shouldContain
 class TodoCardListElementTest : GwtTestSpec({
     Given("TodoCardListElement application is running") {
         When("Todos are added to the store") {
-            val logs = document.getConsoleLogs().map { it.toString() }
+            val logs = page.getConsoleLogs().map { it.toString() }
             Then("TodoCardListElement should render active and completed todos") {
                 logs.any { it.contains("List Test: Added active todos:") }.shouldBeTrue()
                 logs.any { it.contains("List Test: Added completed todo:") }.shouldBeTrue()

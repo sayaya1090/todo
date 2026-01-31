@@ -1,8 +1,8 @@
 package dev.sayaya.client;
 
 import dev.sayaya.client.interfaces.NewTodoInputElement;
-import dev.sayaya.client.interfaces.TodoToolbarElement;
 import dev.sayaya.client.interfaces.TodoCardListElement;
+import dev.sayaya.client.interfaces.TodoToolbarElement;
 import dev.sayaya.client.interfaces.ToggleAllButton;
 
 import javax.inject.Singleton;

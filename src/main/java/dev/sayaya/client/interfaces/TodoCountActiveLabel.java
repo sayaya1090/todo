@@ -1,11 +1,6 @@
 package dev.sayaya.client.interfaces;
 
-import dev.sayaya.client.domain.State;
 import dev.sayaya.client.usecase.StatStore;
-import dev.sayaya.client.usecase.TodoListStore;
-import dev.sayaya.client.usecase.TodoStore;
-import dev.sayaya.rx.Observable;
-import elemental2.core.JsArray;
 import elemental2.dom.HTMLLabelElement;
 import lombok.experimental.Delegate;
 import org.jboss.elemento.HTMLContainerBuilder;

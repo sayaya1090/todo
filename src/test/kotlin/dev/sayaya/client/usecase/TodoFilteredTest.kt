@@ -8,7 +8,7 @@ import io.kotest.matchers.collections.shouldContain
 class TodoFilteredTest : GwtTestSpec({
     Given("TodoFiltered use case is running") {
         When("todos are added and filter state changes") {
-            val logs = document.getConsoleLogs().map { it.toString() }
+            val logs = page.getConsoleLogs().map { it.toString() }
 
             Then("TodoFiltered should emit all todos when filter is null") {
                 logs shouldContain "TodoFiltered After Null Filter"

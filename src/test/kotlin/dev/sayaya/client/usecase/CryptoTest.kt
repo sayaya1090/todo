@@ -8,8 +8,8 @@ import io.kotest.matchers.collections.shouldContain
 class CryptoTest : GwtTestSpec({
     Given("Crypto utility is available in browser") {
         When("randomUUID() is called") {
+            val logs = page.getConsoleLogs()
             Then("It should return a valid UUID string") {
-                val logs = document.getConsoleLogs()
                 logs shouldContain "UUID Format Valid"
                 logs shouldContain "UUID Uniqueness Valid"
             }

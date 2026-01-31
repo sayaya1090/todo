@@ -1,188 +1,163 @@
 
 package dev.sayaya.client.interfaces
 
+import com.microsoft.playwright.Locator
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
-import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.WebElement
-import org.openqa.selenium.interactions.Actions
-import org.openqa.selenium.support.ui.ExpectedConditions.presenceOfAllElementsLocatedBy
-import org.openqa.selenium.support.ui.WebDriverWait
-import java.time.Duration
 
 @GwtHtml("src/test/webapp/todoCardElementTest.html")
 class TodoCardElementTest : GwtTestSpec({
-    fun WebElement.doubleClick() {
-        (document as JavascriptExecutor).executeScript("""
-            var evt = new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window });
-            arguments[0].dispatchEvent(evt);
-        """, this)
-    }
-    fun WebElement.setValueAndPressKey(value: String, key: String) {
-        (document as JavascriptExecutor).executeScript("arguments[0].value = arguments[1];", this, value)
-        (document as JavascriptExecutor).executeScript("""
-            var event = new KeyboardEvent('keydown', {
-                key: arguments[1],
-                bubbles: true,
-                cancelable: true
-            });
-            arguments[0].dispatchEvent(event);
-        """, this, key)
-    }
     Given("TodoCardElement is rendered") {
-        val wait = WebDriverWait(document, Duration.ofSeconds(10))
-
         When("Todo cards are displayed") {
-            val todoItems = wait.until(
-                presenceOfAllElementsLocatedBy(By.cssSelector(".todo-item"))
-            )
+            val todoItems = page.locator(".todo-item")
+            todoItems.first().waitFor()
 
             Then("It should render 3 todo items") {
-                todoItems.size shouldBe 3
+                todoItems.count() shouldBe 3
             }
 
             Then("First todo should show correct title") {
-                val firstTodo = todoItems[0]
-                val title = firstTodo.findElement(By.cssSelector(".todo-title"))
-                title.text shouldBe "Buy groceries"
+                val firstTodo = todoItems.nth(0)
+                val title = firstTodo.locator(".todo-title")
+                title.innerText() shouldBe "Buy groceries"
             }
 
             Then("First todo should not be completed") {
-                val firstTodo = todoItems[0]
-                val classes = firstTodo.getDomAttribute("class")
+                val firstTodo = todoItems.nth(0)
+                val classes = firstTodo.getAttribute("class")
                 classes shouldNotContain "completed"
             }
 
             Then("Second todo should be completed") {
-                val secondTodo = todoItems[1]
-                val classes = secondTodo.getDomAttribute("class")
+                val secondTodo = todoItems.nth(1)
+                val classes = secondTodo.getAttribute("class")
                 classes shouldContain "completed"
             }
 
             Then("Second todo checkbox should be selected") {
-                val secondTodo = todoItems[1]
-                val checkbox = secondTodo.findElement(By.cssSelector(".toggle"))
-                checkbox.getDomProperty("checked") shouldBe "true"
+                val secondTodo = todoItems.nth(1)
+                val checkbox = secondTodo.locator(".toggle")
+                checkbox.evaluate("element => element.checked") shouldBe true
             }
         }
 
         When("User toggles checkbox") {
-            val todoItems = document.findElements(By.cssSelector(".todo-item"))
-            val firstTodo = todoItems[0]
-            val checkbox = firstTodo.findElement(By.cssSelector(".toggle"))
+            val todoItems = page.locator(".todo-item")
+            val firstTodo = todoItems.nth(0)
+            val checkbox = firstTodo.locator(".toggle")
 
             checkbox.click()
 
             Then("Todo should become completed") {
-                val classes = firstTodo.getDomAttribute("class")
+                val classes = firstTodo.getAttribute("class")
                 classes shouldContain "completed"
             }
 
             And("Toggling again should make it active") {
                 checkbox.click()
-                val classes = firstTodo.getDomAttribute("class")
+                val classes = firstTodo.getAttribute("class")
                 classes shouldNotContain "completed"
             }
         }
 
         When("User double-clicks title to edit") {
-            val todoItems = document.findElements(By.cssSelector(".todo-item"))
-            val firstTodo = todoItems[0]
-            val titleLabel = firstTodo.findElement(By.cssSelector(".todo-title"))
+            val todoItems = page.locator(".todo-item")
+            val firstTodo = todoItems.nth(0)
+            val titleLabel = firstTodo.locator(".todo-title")
 
-            val actions = Actions(document)
-            actions.doubleClick(titleLabel).perform()
+            titleLabel.dblclick()
 
             Then("It should enter editing mode") {
-                val classes = firstTodo.getDomAttribute("class")
+                val classes = firstTodo.getAttribute("class")
                 classes shouldContain "editing"
             }
 
             Then("Edit input should be visible") {
-                val editInput = firstTodo.findElement(By.cssSelector(".edit"))
-                editInput.isDisplayed shouldBe true
-            }
-        }
-
-        When("User edits title and presses Enter") {
-            val todoItems = document.findElements(By.cssSelector(".todo-item"))
-            val firstTodo = todoItems[0]
-            val titleLabel = firstTodo.findElement(By.cssSelector(".todo-title"))
-
-            // Enter edit mode
-            titleLabel.doubleClick()
-            // Edit and save
-            val editInput = firstTodo.findElement(By.cssSelector(".edit"))
-            editInput.setValueAndPressKey("Updated task title", "Enter")
-
-            Then("Title should be updated") {
-                val updatedTitle = firstTodo.findElement(By.cssSelector(".todo-title"))
-                updatedTitle.text shouldBe "Updated task title"
+                val editInput = firstTodo.locator(".edit")
+                editInput.isVisible shouldBe true
             }
 
-            Then("Should exit editing mode") {
-                val classes = firstTodo.getDomAttribute("class")
-                classes shouldNotContain "editing"
+            And("edits title and presses Enter") {
+                val editInput = firstTodo.locator(".edit")
+                editInput.click(Locator.ClickOptions().setClickCount(3))
+                editInput.press("Backspace")
+                editInput.pressSequentially("Updated task title")
+                editInput.press("Enter")
+
+                Then("Title should be updated") {
+                    val updatedTitle = firstTodo.locator(".todo-title")
+                    updatedTitle.innerText() shouldBe "Updated task title"
+                }
+
+                Then("Should exit editing mode") {
+                    val classes = firstTodo.getAttribute("class")
+                    classes shouldNotContain "editing"
+                }
             }
         }
 
         When("User presses Escape while editing") {
-            val todoItems = document.findElements(By.cssSelector(".todo-item"))
-            val secondTodo = todoItems[1]
-            val titleLabel = secondTodo.findElement(By.cssSelector(".todo-title"))
-            val originalTitle = titleLabel.text
+            val todoItems = page.locator(".todo-item")
+            val secondTodo = todoItems.nth(1)
+            val titleLabel = secondTodo.locator(".todo-title")
+            val originalTitle = titleLabel.innerText()
 
             // Enter edit mode
-            titleLabel.doubleClick()
+            titleLabel.dblclick()
 
             // Edit but cancel
-            val editInput = secondTodo.findElement(By.cssSelector(".edit"))
-            editInput.setValueAndPressKey("This will be cancelled", "Escape")
+            val editInput = secondTodo.locator(".edit")
+            editInput.click(Locator.ClickOptions().setClickCount(3))
+            editInput.press("Backspace")
+            editInput.pressSequentially("This will be cancelled")
+            editInput.press("Escape")
 
             Then("Should keep original title") {
-                val currentTitle = secondTodo.findElement(By.cssSelector(".todo-title"))
-                currentTitle.text shouldBe originalTitle
+                val currentTitle = secondTodo.locator(".todo-title")
+                currentTitle.innerText() shouldBe originalTitle
             }
 
             Then("Should exit editing mode") {
-                val classes = secondTodo.getDomAttribute("class")
+                val classes = secondTodo.getAttribute("class")
                 classes shouldNotContain "editing"
             }
         }
 
         When("User tries to save invalid title") {
-            val todoItems = document.findElements(By.cssSelector(".todo-item"))
-            val firstTodo = todoItems[0]
-            val titleLabel = firstTodo.findElement(By.cssSelector(".todo-title"))
-            val originalTitle = titleLabel.text
+            val todoItems = page.locator(".todo-item")
+            val firstTodo = todoItems.nth(0)
+            val titleLabel = firstTodo.locator(".todo-title")
+            val originalTitle = titleLabel.innerText()
 
             // Enter edit mode
-            titleLabel.doubleClick()
+            titleLabel.dblclick()
 
             // Try invalid input
-            val editInput = firstTodo.findElement(By.cssSelector(".edit"))
-            editInput.setValueAndPressKey("X", "Enter")
+            val editInput = firstTodo.locator(".edit")
+            editInput.click(Locator.ClickOptions().setClickCount(3))
+            editInput.press("Backspace")
+            editInput.pressSequentially("X")
+            editInput.press("Enter")
 
             Then("Should keep original title") {
-                val currentTitle = firstTodo.findElement(By.cssSelector(".todo-title"))
-                currentTitle.text shouldBe originalTitle
+                val currentTitle = firstTodo.locator(".todo-title")
+                currentTitle.innerText() shouldBe originalTitle
             }
         }
 
         When("User clicks destroy button") {
-            val initialCount = document.findElements(By.cssSelector(".todo-item")).size
-            val todoItems = document.findElements(By.cssSelector(".todo-item"))
-            val firstTodo = todoItems[0]
-            val destroyBtn = firstTodo.findElement(By.cssSelector(".destroy"))
+            val initialCount = page.locator(".todo-item").count()
+            val todoItems = page.locator(".todo-item")
+            val firstTodo = todoItems.nth(0)
+            val destroyBtn = firstTodo.locator(".destroy")
 
             destroyBtn.click()
 
             Then("Todo should be removed") {
-                val currentCount = document.findElements(By.cssSelector(".todo-item")).size
+                val currentCount = page.locator(".todo-item").count()
                 currentCount shouldBe (initialCount - 1)
             }
         }

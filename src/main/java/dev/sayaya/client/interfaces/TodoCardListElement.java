@@ -2,7 +2,6 @@ package dev.sayaya.client.interfaces;
 
 import dev.sayaya.client.usecase.TodoFiltered;
 import dev.sayaya.client.usecase.TodoStore;
-import dev.sayaya.rx.Subscription;
 import elemental2.core.JsArray;
 import elemental2.dom.HTMLUListElement;
 import lombok.experimental.Delegate;
@@ -11,7 +10,6 @@ import org.jboss.elemento.IsElement;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import java.util.HashMap;
 import java.util.Map;
 
