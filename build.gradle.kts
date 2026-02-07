@@ -1,7 +1,7 @@
 plugins {
     id("java")
     kotlin("jvm") version "2.3.0"
-    id("dev.sayaya.gwt") version "2.2.7.3"
+    id("dev.sayaya.gwt") version "2.2.9"
     id("com.adarshr.test-logger") version "4.0.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.4"
 }
@@ -23,7 +23,7 @@ dependencies {
     implementation("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
     testAnnotationProcessor("com.google.dagger:dagger-compiler:2.59")
-    testImplementation("dev.sayaya:gwt-test:2.2.7.3")
+    testImplementation("dev.sayaya:gwt-test:2.2.9")
     testImplementation("io.kotest:kotest-runner-junit5:6.1.2")
     testImplementation("io.mockk:mockk:1.14.9")
 }
